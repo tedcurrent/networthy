@@ -1,3 +1,33 @@
 {
-  "extends": "next/core-web-vitals"
+  "parser": "@typescript-eslint/parser",
+  "plugins": [
+    "@typescript-eslint",
+    "prettier",
+    "react",
+    "react-hooks",
+    "typescript-sort-keys",
+    "simple-import-sort"
+  ],
+  "extends": [
+    "next/core-web-vitals",
+    "plugin:prettier/recommended",
+    "plugin:typescript-sort-keys/recommended"
+  ],
+  "rules": {
+    "react-hooks/rules-of-hooks": "error",
+    "react-hooks/exhaustive-deps": "warn",
+
+    "simple-import-sort/imports": "error",
+    "simple-import-sort/exports": "error",
+    
+    "prettier/prettier": [
+      "error", {
+        "bracketSpacing": true,
+        "singleQuote": true,
+        "trailingComma": "none",
+        "semi": false,
+        "arrowParens": "avoid"
+      }
+    ]
+  }
 }
