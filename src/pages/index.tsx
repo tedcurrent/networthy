@@ -16,7 +16,7 @@ const Home: NextPage = () => {
       </Head>
 
       <nav className="container mb-4 mt-4">
-        <h1 className="text-2xl font-bold">Networthy</h1>
+        <span className="text-2xl font-bold">Networthy</span>
       </nav>
 
       <main className="container mt-24">
@@ -46,9 +46,9 @@ const Content: FC = () => {
       <div>
         <div className="mb-2">
           <h2>Current</h2>
-          <h1 className="text-4xl font-bold text-green-400">
+          <h3 className="text-4xl font-bold text-green-400">
             {formatMoney(data.networth.money)}
-          </h1>
+          </h3>
           <Diff
             value={
               data.networth.money.value / data.previousNetworth.money.value
@@ -61,10 +61,10 @@ const Content: FC = () => {
         </div>
 
         <div>
-          <p>Previous</p>
-          <h1 className="text-2xl font-bold text-gray-400">
+          <h2>Previous</h2>
+          <h3 className="text-2xl font-bold text-gray-400">
             {formatMoney(data.previousNetworth.money)}
-          </h1>
+          </h3>
           <p className="text-sm text-gray-500">
             {format(new Date(data.previousNetworth.timestamp), 'PPP')}
           </p>
