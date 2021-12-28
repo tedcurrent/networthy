@@ -1,9 +1,14 @@
 module.exports = {
-  content: [
-    "./pages/**/*.{js,ts,jsx,tsx}"
-  ],
+  content: ['./src/pages/**/*.{js,ts,jsx,tsx}'],
   theme: {
-    extend: {},
+    fontFamily: {
+      sans: ['Lato', 'Arial', 'sans-serif']
+    },
+    container: {
+      center: true,
+      padding: '2rem'
+    },
+    extend: {}
   },
-  plugins: [],
+  plugins: []
 }
