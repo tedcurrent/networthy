@@ -10,6 +10,9 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
   return <Component {...pageProps} />
 }
 
+console.log('vercel url', process.env.VERCEL_URL)
+console.log('next public vercel url', process.env.NEXT_PUBLIC_VERCEL_URL)
+
 export default withTRPC<AppRouter>({
   config() {
     /**
