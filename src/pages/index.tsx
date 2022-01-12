@@ -50,13 +50,17 @@ const Content: FC = () => {
             {formatMoney(data.networth.money)}
           </h3>
           <Diff
-            value={
-              data.networth.money.value / data.previousNetworth.money.value
+            ratio={
+              data.previousNetworth.money.value !== 0
+                ? data.networth.money.value / data.previousNetworth.money.value
+                : 1
             }
           />
 
           <p className="text-sm text-gray-500">
-            {format(new Date(data.networth.timestamp), 'PPP')}
+            {data.networth.timestamp
+              ? format(new Date(data.networth.timestamp), 'PPP')
+              : '-'}
           </p>
         </div>
 
@@ -66,7 +70,9 @@ const Content: FC = () => {
             {formatMoney(data.previousNetworth.money)}
           </h3>
           <p className="text-sm text-gray-500">
-            {format(new Date(data.previousNetworth.timestamp), 'PPP')}
+            {data.previousNetworth.timestamp
+              ? format(new Date(data.previousNetworth.timestamp), 'PPP')
+              : '-'}
           </p>
         </div>
       </div>
@@ -76,10 +82,10 @@ const Content: FC = () => {
   return null
 }
 
-const Diff: FC<{ value: number }> = ({ value }) => {
-  const isPositive = value > 1
+const Diff: FC<{ ratio: number }> = ({ ratio }) => {
+  const isPositive = ratio > 1
 
-  const formattedValue = () => ((value - 1) * 100).toFixed(2)
+  const formattedValue = () => ((ratio - 1) * 100).toFixed(2)
 
   return (
     <span className={isPositive ? `text-green-200` : 'text-red-200'}>
