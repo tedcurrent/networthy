@@ -4,7 +4,7 @@
 ### Run dev database
 A serverless MySQL DB is used: [PlanetScale](https://planetscale.com/).
 
-`pscale connect noteworthy <BRANCH>`
+`pscale connect networthy <BRANCH>`
 
 Be sure to also run a shadow database on the side when making changes to the schema. As the dev environment, this needs to be set up in PlanetScale as PlanetScale does allow dropping or creating databases with SQL.
 
