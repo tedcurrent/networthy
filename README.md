@@ -15,7 +15,7 @@ Be sure to also run a shadow database on the side when making changes to the sch
 `npx prisma format`
 
 ### TODO
-- [ ] Setup production database
+- [x] Setup production database
 - [ ] Add dark / light mode support
 - [ ] Check if any accessibility stuff needs to be done
 - [ ] Run lighthouse and log down needed changes
