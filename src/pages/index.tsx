@@ -1,10 +1,9 @@
-import { format, formatISO, startOfHour } from 'date-fns'
 import type { NextPage } from 'next'
 import Head from 'next/head'
 import { FC } from 'react'
 
-import { formatMoney } from '../utils/formatMoney'
-import { trpc } from '../utils/trpc'
+import Card from '../components/Card'
+import { formatMoney, Money } from '../utils/formatMoney'
 
 const Home: NextPage = () => {
   return (
@@ -16,11 +15,10 @@ const Home: NextPage = () => {
       </Head>
 
       <nav className="container mb-4 mt-4">
-        <span className="text-2xl font-bold">Networthy</span>
+        <span className="text-md font-bold">Networthy</span>
       </nav>
 
-      <main className="container mt-24">
-        <h1 className="text-2xl mb-4">Your networth</h1>
+      <main className="container mt-20">
         <Content />
       </main>
     </>
@@ -28,69 +26,45 @@ const Home: NextPage = () => {
 }
 
 const Content: FC = () => {
-  const { data, isLoading } = trpc.useQuery([
-    'get-networth-by-timestamp',
-    { timestamp: formatISO(startOfHour(new Date())) }
-  ])
-
-  if (isLoading) {
-    return (
-      <div>
-        <p>Loading...</p>
+  return (
+    <div>
+      <div className="flex justify-between mb-4 items-center">
+        <h1 className="text-lg font-bold">Net Worth</h1>
+        <span className="text-2xl">
+          {formatMoney({ value: 12345.0, currency: 'EUR' })}
+        </span>
       </div>
-    )
-  }
 
-  if (data) {
-    return (
-      <div>
-        <div className="mb-2">
-          <h2>Current</h2>
-          <h3 className="text-4xl font-bold text-green-400">
-            {formatMoney(data.networth.money)}
-          </h3>
-          <Diff
-            ratio={
-              data.previousNetworth.money.value !== 0
-                ? data.networth.money.value / data.previousNetworth.money.value
-                : 1
-            }
-          />
-
-          <p className="text-sm text-gray-500">
-            {data.networth.timestamp
-              ? format(new Date(data.networth.timestamp), 'PPP')
-              : '-'}
-          </p>
-        </div>
-
-        <div>
-          <h2>Previous</h2>
-          <h3 className="text-2xl font-bold text-gray-400">
-            {formatMoney(data.previousNetworth.money)}
-          </h3>
-          <p className="text-sm text-gray-500">
-            {data.previousNetworth.timestamp
-              ? format(new Date(data.previousNetworth.timestamp), 'PPP')
-              : '-'}
-          </p>
-        </div>
-      </div>
-    )
-  }
-
-  return null
+      <Card>
+        <WealthRow label="Assets" money={{ value: 69420.0, currency: 'EUR' }} />
+        <WealthRow
+          label="Liabilities"
+          money={{ value: -6667.0, currency: 'EUR' }}
+        />
+      </Card>
+    </div>
+  )
 }
 
-const Diff: FC<{ ratio: number }> = ({ ratio }) => {
-  const isPositive = ratio > 1
-
-  const formattedValue = () => ((ratio - 1) * 100).toFixed(2)
+const WealthRow: FC<{ label: string; money: Money }> = ({ label, money }) => {
+  const isPositive = money.value >= 0
 
   return (
-    <span className={isPositive ? `text-green-200` : 'text-red-200'}>
-      {isPositive ? `+${formattedValue()}` : `${formattedValue()}`}%
-    </span>
+    <div className="flex justify-between items-center mb-2 last:mb-0">
+      <span className="text-xl text-gray-400">{label}</span>
+
+      <div className="flex flex-row items-center">
+        <span className="text-lg mr-2">
+          {(isPositive ? '+' : '') + formatMoney(money)}
+        </span>
+
+        <div
+          className={`rounded-full w-2 h-2 ${
+            isPositive ? 'bg-green-600' : 'bg-red-500'
+          }`}
+        />
+      </div>
+    </div>
   )
 }
 
