@@ -1,6 +1,7 @@
 {
   "name": "noteworthy",
   "private": true,
+  "type": "module",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -23,7 +24,7 @@
     "zod": "^3.11.6"
   },
   "devDependencies": {
-    "@types/node": "17.0.5",
+    "@types/node": "^17.0.5",
     "@types/ramda": "^0.27.63",
     "@types/react": "17.0.38",
     "@typescript-eslint/eslint-plugin": "^5.8.1",
@@ -40,6 +41,10 @@
     "postcss": "^8.4.5",
     "prettier": "^2.5.1",
     "tailwindcss": "^3.0.7",
-    "typescript": "4.5.4"
+    "ts-node": "^10.4.0",
+    "typescript": "^4.5.4"
+  },
+  "prisma": {
+    "seed": "node --loader ts-node/esm prisma/seed.ts"
   }
 }
