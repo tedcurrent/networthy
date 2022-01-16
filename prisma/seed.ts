@@ -1,5 +1,4 @@
-import pkg from '@prisma/client'
-const { PrismaClient, BalanceCategory } = pkg
+import { BalanceCategory, PrismaClient } from '@prisma/client'
 
 const balanceTypes = [
   {
