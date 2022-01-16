@@ -11,6 +11,9 @@ Be sure to also run a shadow database on the side when making changes to the sch
 ### Run migrations locally
 `npx dotenv -e .env.local -- npx prisma migrate dev`
 
+### Run db seed
+`npx dotenv -e .env.local -- npx prisma db seed`
+
 ### Format migrations locally
 `npx prisma format`
 
