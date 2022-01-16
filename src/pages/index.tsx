@@ -38,7 +38,7 @@ const Content: FC = () => {
   if (isLoading) {
     return (
       <div>
-        <p>Loading...</p>
+        <p>Loading..</p>
       </div>
     )
   }
