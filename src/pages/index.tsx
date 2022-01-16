@@ -31,14 +31,14 @@ const Content: FC = () => {
   const { data, isLoading } = trpc.useQuery([
     'get-networth-by-timestamp',
     {
-      timestamp: formatISO(startOfHour(new Date()))
+      timestamp: formatISO(new Date())
     }
   ])
 
   if (isLoading) {
     return (
       <div>
-        <p>Loading..</p>
+        <p>Loading...</p>
       </div>
     )
   }
