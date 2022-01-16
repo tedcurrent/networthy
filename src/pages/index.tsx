@@ -1,9 +1,11 @@
+import { formatISO, startOfHour } from 'date-fns'
 import type { NextPage } from 'next'
 import Head from 'next/head'
 import { FC } from 'react'
 
 import Card from '../components/Card'
 import { formatMoney, Money } from '../utils/formatMoney'
+import { trpc } from '../utils/trpc'
 
 const Home: NextPage = () => {
   return (
@@ -26,41 +28,61 @@ const Home: NextPage = () => {
 }
 
 const Content: FC = () => {
-  return (
-    <div>
-      <div className="flex justify-between mb-4 items-center">
-        <h1 className="text-lg font-bold">Net Worth</h1>
-        <span className="text-2xl">
-          {formatMoney({ value: 12345.0, currency: 'EUR' })}
-        </span>
-      </div>
+  const { data, isLoading } = trpc.useQuery([
+    'get-networth-by-timestamp',
+    {
+      timestamp: formatISO(startOfHour(new Date()))
+    }
+  ])
 
-      <Card>
-        <WealthRow label="Assets" money={{ value: 69420.0, currency: 'EUR' }} />
-        <WealthRow
-          label="Liabilities"
-          money={{ value: -6667.0, currency: 'EUR' }}
-        />
-      </Card>
-    </div>
-  )
+  if (isLoading) {
+    return (
+      <div>
+        <p>Loading...</p>
+      </div>
+    )
+  }
+
+  if (data) {
+    return (
+      <div>
+        <div className="flex justify-between mb-4 items-center">
+          <h1 className="text-lg font-bold">Net Worth</h1>
+          <span className="text-2xl">{formatMoney(data.networth.money)}</span>
+        </div>
+
+        <Card>
+          <WealthRow label="Assets" money={data.assets.money} />
+          <WealthRow
+            label="Liabilities"
+            money={data.liabilitiesTotal.money}
+            negative
+          />
+        </Card>
+      </div>
+    )
+  }
+
+  return null
 }
 
-const WealthRow: FC<{ label: string; money: Money }> = ({ label, money }) => {
-  const isPositive = money.value >= 0
-
+const WealthRow: FC<{ label: string; money: Money; negative?: boolean }> = ({
+  label,
+  money,
+  negative
+}) => {
   return (
     <div className="flex justify-between items-center mb-2 last:mb-0">
       <span className="text-xl text-gray-400">{label}</span>
 
       <div className="flex flex-row items-center">
         <span className="text-lg mr-2">
-          {(isPositive ? '+' : '') + formatMoney(money)}
+          {(negative ? '-' : '+') + formatMoney(money)}
         </span>
 
         <div
           className={`rounded-full w-2 h-2 ${
-            isPositive ? 'bg-green-600' : 'bg-red-500'
+            negative ? 'bg-red-500' : 'bg-green-600'
           }`}
         />
       </div>
