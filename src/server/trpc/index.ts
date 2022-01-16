@@ -1,3 +1,4 @@
+import { BalanceCategory, BalanceItem, BalanceType } from '@prisma/client'
 import * as trpc from '@trpc/server'
 import R from 'ramda'
 import { z } from 'zod'
@@ -9,11 +10,11 @@ export const appRouter = trpc.router().query('get-networth-by-timestamp', {
     timestamp: z.string()
   }),
   resolve: async ({ input }) => {
-    const categories = await prisma.wealthCategory.findMany({
-      distinct: ['type'],
+    const latestBalanceTypesWithItems = await prisma.balanceType.findMany({
+      distinct: ['name'],
       include: {
-        wealthSources: {
-          take: 2,
+        balanceItems: {
+          take: 1,
           where: {
             createdAt: {
               lte: input.timestamp
@@ -26,26 +27,46 @@ export const appRouter = trpc.router().query('get-networth-by-timestamp', {
       }
     })
 
-    const latest = categories.map(x => R.head(x.wealthSources)).filter(x => !!x)
+    const [assets, liabilities] = R.partition(
+      balanceType => balanceType.category === BalanceCategory.ASSET,
+      latestBalanceTypesWithItems
+    )
 
-    const previous = categories
-      .map(x => (x.wealthSources.length > 1 ? R.last(x.wealthSources) : null))
-      .filter(x => !!x)
+    const computeBalanceValue = (
+      typesWithItems: (BalanceType & { balanceItems: BalanceItem[] })[]
+    ) => {
+      return R.pipe(
+        R.map((balanceType: BalanceType & { balanceItems: BalanceItem[] }) => {
+          const item = R.head(balanceType.balanceItems)
+
+          return item ? item.value : null
+        }),
+        R.reject(R.isNil),
+        R.sum
+      )(typesWithItems)
+    }
+
+    const assetsValue = computeBalanceValue(assets)
+    const liabilitiesValue = computeBalanceValue(liabilities)
 
     return {
       networth: {
         money: {
-          value: latest.reduce((acc, curr) => acc + (curr?.value ?? 0), 0),
+          value: assetsValue - liabilitiesValue,
           currency: 'EUR'
-        },
-        timestamp: R.head(latest)?.createdAt
+        }
       },
-      previousNetworth: {
+      assets: {
         money: {
-          value: previous.reduce((acc, curr) => acc + (curr?.value ?? 0), 0),
+          value: assetsValue,
           currency: 'EUR'
-        },
-        timestamp: R.head(previous)?.createdAt
+        }
+      },
+      liabilitiesTotal: {
+        money: {
+          value: liabilitiesValue,
+          currency: 'EUR'
+        }
       }
     }
   }
