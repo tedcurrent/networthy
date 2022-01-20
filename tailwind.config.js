@@ -10,5 +10,15 @@ module.exports = {
     },
     extend: {}
   },
-  plugins: []
+  darkMode: 'media',
+  plugins: [
+    require('tailwind-css-variables')(
+      {
+        // modules
+      },
+      {
+        // options
+      }
+    )
+  ]
 }
