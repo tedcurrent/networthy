@@ -4,6 +4,7 @@ import Head from 'next/head'
 import { FC } from 'react'
 
 import Card from '../components/Card'
+import Chart from '../components/Chart'
 import { formatMoney, Money } from '../utils/formatMoney'
 import { trpc } from '../utils/trpc'
 
@@ -51,13 +52,21 @@ const Content: FC = () => {
           <span className="text-2xl">{formatMoney(data.networth.money)}</span>
         </div>
 
+        <div className="mb-10">
+          <Card>
+            <WealthRow label="Assets" money={data.assets.money} />
+            <WealthRow
+              label="Liabilities"
+              money={data.liabilitiesTotal.money}
+              negative
+            />
+          </Card>
+        </div>
+
         <Card>
-          <WealthRow label="Assets" money={data.assets.money} />
-          <WealthRow
-            label="Liabilities"
-            money={data.liabilitiesTotal.money}
-            negative
-          />
+          <div style={{ height: 260 }}>
+            <Chart />
+          </div>
         </Card>
       </div>
     )
@@ -82,7 +91,7 @@ const WealthRow: FC<{ label: string; money: Money; negative?: boolean }> = ({
 
         <div
           className={`rounded-full w-2 h-2 ${
-            negative ? 'bg-red-500' : 'bg-green-600'
+            negative ? 'bg-red-500' : 'bg-green-400'
           }`}
         />
       </div>
