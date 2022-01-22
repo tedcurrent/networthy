@@ -18,14 +18,15 @@ Be sure to also run a shadow database on the side when making changes to the sch
 `npx prisma format`
 
 ### TODO
-- [x] Setup production database
-- [ ] Add dark / light mode support
-- [ ] Check if any accessibility stuff needs to be done
-- [ ] Run lighthouse and log down needed changes
-- [ ] Add some light animations
-- [ ] Unit tests
-- [ ] E2E tests with Detox
-- [ ] More Readme
-- [ ] Add support for inputting wealth through the client
+- [ ] Add chart to show trend over time
 - [ ] Add support for viewing wealth components
+- [ ] Add support for inputting wealth through the client
+- [ ] E2E tests with Detox
+- [ ] Add some light animations
+- [ ] Add dark / light mode support
+- [ ] Add missing accessibility support 
+- [ ] Run lighthouse and log down needed changes
+- [ ] Unit tests
+- [ ] More Readme
 - [ ] Add auth
+- [x] Setup production database
