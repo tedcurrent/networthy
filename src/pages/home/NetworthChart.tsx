@@ -30,8 +30,8 @@ const NetworthChart: FC = () => {
     return <ActivityIndicator />
   }
 
-  if (!data) {
-    return <span>No data found.</span>
+  if (!data || data.trend.length === 0) {
+    return <span>No trend data found.</span>
   }
 
   return (
