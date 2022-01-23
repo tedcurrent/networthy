@@ -4,65 +4,42 @@ import React, { FC } from 'react'
 import {
   Area,
   AreaChart,
-  CartesianAxis,
   CartesianGrid,
-  ReferenceDot,
   ResponsiveContainer,
   Tooltip,
   XAxis,
   YAxis
 } from 'recharts'
+import {
+  NameType,
+  ValueType
+} from 'recharts/types/component/DefaultTooltipContent'
 import { TooltipProps } from 'recharts/types/component/Tooltip'
 
-import { formatMoney } from '../utils/formatMoney'
+import ActivityIndicator from '../../components/ActivityIndicator'
+import { formatMoneyString } from '../../utils/formatMoney'
+import { trpc } from '../../utils/trpc'
 
 const green = 'var(--color-green-400)'
 const gray = 'var(--color-gray-400)'
 
-const data = [
-  {
-    dateTime: '2022-01-01',
-    networth: 4000
-  },
-  {
-    dateTime: '2022-01-03',
-    networth: 3000
-  },
-  {
-    dateTime: '2022-01-05',
-    networth: 2000
-  },
-  {
-    dateTime: '2022-01-07',
-    networth: 2780
-  },
-  {
-    dateTime: '2022-01-11',
-    networth: 1890
-  },
-  {
-    dateTime: '2022-01-13',
-    networth: null
-  },
-  {
-    dateTime: '2022-01-17',
-    networth: null
+const NetworthChart: FC = () => {
+  const { data, isLoading } = trpc.useQuery(['trend.get'])
+
+  if (isLoading) {
+    return <ActivityIndicator />
   }
-]
 
-const Chart: FC = () => {
-  const lastWithData = R.findLast(val => val.networth !== null, data)
-
-  const unit = '€'
-
-  const currency = 'EUR'
+  if (!data) {
+    return <span>No data found.</span>
+  }
 
   return (
     <ResponsiveContainer width="100%" height="100%">
       <AreaChart
         width={500}
         height={400}
-        data={data}
+        data={data.trend}
         margin={{
           top: 15,
           right: 0,
@@ -72,7 +49,7 @@ const Chart: FC = () => {
       >
         <CartesianGrid
           vertical={false}
-          strokeDasharray="8"
+          strokeDasharray="6 6"
           strokeOpacity={0.5}
           stroke={gray}
         />
@@ -88,9 +65,7 @@ const Chart: FC = () => {
           tickLine={false}
           axisLine={false}
           stroke={gray}
-          tickFormatter={(date: string) => {
-            return format(new Date(date), 'LLL d')
-          }}
+          tickFormatter={(date: string) => format(new Date(date), 'MM/yyyy')}
         />
 
         <YAxis
@@ -99,9 +74,13 @@ const Chart: FC = () => {
           stroke={gray}
           mirror
           tickFormatter={value =>
-            formatMoney(
-              { value, currency },
-              { notation: 'compact', minimumFractionDigits: 0 }
+            formatMoneyString(
+              { value, currency: data.currency },
+              {
+                currency: data.currency,
+                notation: 'compact',
+                minimumFractionDigits: 0
+              }
             )
           }
         />
@@ -109,7 +88,9 @@ const Chart: FC = () => {
         <Tooltip
           isAnimationActive={false}
           cursor={{ stroke: gray, strokeWidth: 1 }}
-          content={CustomTooltip}
+          content={props => (
+            <CustomTooltip {...props} currency={data.currency} />
+          )}
         />
 
         <Area
@@ -119,50 +100,41 @@ const Chart: FC = () => {
           stroke={green}
           strokeWidth={3}
           fill="url(#colorNetworth)"
-          unit={unit}
+          fillOpacity={0.7}
           activeDot={{
-            r: 5,
+            r: 3,
             fill: green,
             stroke: green,
             strokeWidth: 3
           }}
         />
-
-        {lastWithData && (
-          <ReferenceDot
-            x={lastWithData.dateTime}
-            y={lastWithData.networth ?? undefined}
-            fillOpacity={1}
-            fill={green}
-            stroke={green}
-            strokeWidth={3}
-            r={3}
-          />
-        )}
       </AreaChart>
     </ResponsiveContainer>
   )
 }
 
-type CustomTooltipProps = TooltipProps<number, string>
+type CustomTooltipProps = { currency: string } & TooltipProps<
+  ValueType,
+  NameType
+>
 
-const CustomTooltip: FC<CustomTooltipProps> = ({ payload }) => {
+const CustomTooltip: FC<CustomTooltipProps> = ({ currency, payload }) => {
   const value = R.head(payload ?? [])
 
   if (!value) {
     return null
   }
 
-  // const formatted = formatMoney({
-  //   value: value.
-  // })
+  const formattedMoney = formatMoneyString({
+    value: typeof value.value === 'number' ? value.value : 0,
+    currency
+  })
+
   return (
     <div className="border-white rounded-sm border-2 px-2 bg-slate-700">
-      <span className="text-sm">
-        {payload?.map(x => (x.value?.toString() ?? '') + (x.unit ?? ''))}
-      </span>
+      <span className="text-sm">{formattedMoney}</span>
     </div>
   )
 }
 
-export default Chart
+export default NetworthChart

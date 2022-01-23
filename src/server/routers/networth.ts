@@ -1,16 +1,16 @@
 import { BalanceCategory, BalanceItem, BalanceType } from '@prisma/client'
-import * as trpc from '@trpc/server'
 import R from 'ramda'
 import { z } from 'zod'
 
-import { prisma } from '../utils/prisma'
+import { DEFAULT_CURRENCY, formatMoney } from '../../utils/formatMoney'
+import { createRouter } from '../createRouter'
 
-export const appRouter = trpc.router().query('get-networth-by-timestamp', {
+export const networthRouter = createRouter().query('get-by-timestamp', {
   input: z.object({
     timestamp: z.string()
   }),
-  resolve: async ({ input }) => {
-    const latestBalanceTypesWithItems = await prisma.balanceType.findMany({
+  resolve: async ({ input, ctx }) => {
+    const latestBalanceTypesWithItems = await ctx.prisma.balanceType.findMany({
       distinct: ['name'],
       include: {
         balanceItems: {
@@ -51,25 +51,14 @@ export const appRouter = trpc.router().query('get-networth-by-timestamp', {
 
     return {
       networth: {
-        money: {
-          value: assetsValue - liabilitiesValue,
-          currency: 'EUR'
-        }
+        money: formatMoney(assetsValue - liabilitiesValue, DEFAULT_CURRENCY)
       },
       assets: {
-        money: {
-          value: assetsValue,
-          currency: 'EUR'
-        }
+        money: formatMoney(assetsValue, DEFAULT_CURRENCY)
       },
       liabilitiesTotal: {
-        money: {
-          value: liabilitiesValue,
-          currency: 'EUR'
-        }
+        money: formatMoney(liabilitiesValue, DEFAULT_CURRENCY)
       }
     }
   }
 })
-
-export type AppRouter = typeof appRouter
