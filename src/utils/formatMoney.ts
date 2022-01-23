@@ -1,9 +1,15 @@
-export type Money = {
-  currency: Intl.NumberFormatOptions['currency']
-  value: number
+import { Money } from '../@types/Money'
+
+export const DEFAULT_CURRENCY = 'EUR'
+
+export const formatMoney = (value: number, currency: string): Money => {
+  return { value, currency }
 }
 
-export const formatMoney = (money: Money, opts?: Intl.NumberFormatOptions) => {
+export const formatMoneyString = (
+  money: Money,
+  opts?: Intl.NumberFormatOptions
+) => {
   const formatter = Intl.NumberFormat('fi-FI', {
     style: 'currency',
     currency: money.currency,

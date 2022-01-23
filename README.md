@@ -2,7 +2,7 @@
 `npm run dev -- -p <PORT>`
 
 ### Run dev database
-A serverless MySQL DB is used: [PlanetScale](https://planetscale.com/).
+A serverless MySQL DB, [PlanetScale](https://planetscale.com/), is used. After setting up PlanetScale, connect:
 
 `pscale connect networthy <BRANCH>`
 
@@ -18,10 +18,10 @@ Be sure to also run a shadow database on the side when making changes to the sch
 `npx prisma format`
 
 ### TODO
-- [ ] Add chart to show trend over time
-- [ ] Add support for viewing wealth components
+- [ ] Add support for viewing wealth breakdown
 - [ ] Add support for inputting wealth through the client
 - [ ] E2E tests with Detox
+- [ ] Feature tests
 - [ ] Add some light animations
 - [ ] Add dark / light mode support
 - [ ] Add missing accessibility support 
@@ -29,4 +29,6 @@ Be sure to also run a shadow database on the side when making changes to the sch
 - [ ] Unit tests
 - [ ] More Readme
 - [ ] Add auth
+- [ ] Figure out why [data transformers](https://trpc.io/docs/data-transformers) don't work
+- [x] Add chart to show trend over time
 - [x] Setup production database
