@@ -13,7 +13,7 @@ A serverless MySQL DB, [PlanetScale](https://planetscale.com/), is used. After s
 
 `pscale connect networthy <BRANCH>`
 
-Be sure to also run a [shadow database](https://www.prisma.io/docs/concepts/components/prisma-migrate/shadow-database) on the side if making changes to the schema. This needs to be set up in PlanetScale as PlanetScale does allow dropping or creating databases with SQL.
+Be sure to also run a [shadow database](https://www.prisma.io/docs/concepts/components/prisma-migrate/shadow-database) on the side if making changes to the schema. This needs to be set up in PlanetScale as PlanetScale does not allow dropping or creating databases with SQL.
 
 ### Run migrations locally
 `npx dotenv -e .env.local -- npx prisma migrate dev`
