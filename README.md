@@ -1,5 +1,5 @@
 ## Networthy
-Measure your networth over time. Mockup in [Excalidraw](https://excalidraw.com/#json=iVQxHNeDsKS2U5OC17F5j,b6sOur89KJlZ8f0ko1arGg).
+Measure your networth over time. Mockup snapshot in [Excalidraw](https://excalidraw.com/#json=iVQxHNeDsKS2U5OC17F5j,b6sOur89KJlZ8f0ko1arGg).
 
 For now this is just a tech playground before auth is implemented.
 
