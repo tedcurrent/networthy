@@ -1,12 +1,20 @@
+import { ErrorMessage, Field, Form, Formik } from 'formik'
 import type { NextPage } from 'next'
 import Head from 'next/head'
+import { useRouter } from 'next/router'
 import * as R from 'ramda'
-import React, { FC, useMemo } from 'react'
+import React, { useMemo } from 'react'
+import * as yup from 'yup'
 
 import ActivityIndicator from '../../components/ActivityIndicator'
 import { keys } from '../../utils/keys'
 import { titlecase } from '../../utils/titlecase'
 import { InferQueryOutput, trpc } from '../../utils/trpc'
+
+const addBalanceSchema = yup.object({
+  value: yup.number().min(0).required('Value required.'),
+  balanceTypeCuid: yup.string().required('Type required.')
+})
 
 const balanceTypeLabels = {
   'checking-account': 'Checking account',
@@ -22,13 +30,6 @@ type BalanceTypeName = keyof typeof balanceTypeLabels
 type BalanceType =
   InferQueryOutput<'balanceType.get-all'>['balanceTypes'][number]
 
-const typeAsOption = (balanceType: BalanceType) => {
-  return {
-    value: balanceType.cuid,
-    label: balanceTypeLabels[balanceType.name as BalanceTypeName]
-  }
-}
-
 const AddBalance: NextPage = () => {
   return (
     <>
@@ -37,22 +38,33 @@ const AddBalance: NextPage = () => {
       </Head>
 
       <section>
-        <h1 className="text-lg font-bold">Add balance</h1>
+        <h1 className="text-lg font-bold mb-4">Add balance</h1>
 
-        <Form />
+        <Content />
       </section>
     </>
   )
 }
 
-const Form = () => {
+const Content = () => {
+  const router = useRouter()
   const { data, isLoading } = trpc.useQuery(['balanceType.get-all'])
+  const mutation = trpc.useMutation(['balanceItem.add'], {
+    onSuccess: () => {
+      router.back()
+    }
+  })
 
   const typesPerCategory = useMemo(() => {
     return R.pipe(
       R.filter((x: BalanceType) =>
         keys(balanceTypeLabels).includes(x.name as BalanceTypeName)
       ),
+      R.map(x => ({
+        value: x.cuid,
+        label: balanceTypeLabels[x.name as BalanceTypeName],
+        category: x.category
+      })),
       R.groupBy(x => x.category)
     )(data?.balanceTypes ?? [])
   }, [data])
@@ -69,54 +81,60 @@ const Form = () => {
   }
 
   return (
-    <form>
-      <div className="flex flex-col">
-        <div className="flex flex-col">
-          <label htmlFor="value">Value</label>
-          <input name="value" type="text" className="text-black" />
-        </div>
-        <div className="flex flex-col">
-          <label htmlFor="category">Category</label>
-          <select name="category" className="text-black">
-            <option>Select category</option>
-            {categoryOptions.map(x => (
-              <option key={x.value} value={x.value}>
-                {x.label}
-              </option>
-            ))}
-          </select>
-        </div>
+    <Formik
+      initialValues={{
+        value: 0,
+        category: 'ASSET' as const,
+        balanceTypeCuid: ''
+      }}
+      validationSchema={addBalanceSchema}
+      onSubmit={async ({ value, balanceTypeCuid }) => {
+        await mutation.mutateAsync({ value, balanceTypeCuid })
+      }}
+    >
+      {({ values, isSubmitting, errors }) => (
+        <Form>
+          <div className="flex flex-col mb-2">
+            <label htmlFor="value">Value</label>
+            <Field name="value" type="number" className="text-black" />
+            <ErrorMessage name="value" component="div" />
+          </div>
 
-        <SelectType category="ASSET" typesPerCategory={typesPerCategory} />
+          <div className="flex flex-col mb-2">
+            <label htmlFor="category">Category</label>
+            <Field name="category" as="select" className="text-black">
+              <option value="">Select category</option>
+              {categoryOptions.map(x => (
+                <option key={x.value} value={x.value}>
+                  {x.label}
+                </option>
+              ))}
+            </Field>
+          </div>
 
-        <button type="submit">Add</button>
-      </div>
-    </form>
-  )
-}
+          <div className="flex flex-col mb-2">
+            <label htmlFor="balanceTypeCuid">Type</label>
+            <Field name="balanceTypeCuid" as="select" className="text-black">
+              <option value="">Select type</option>
+              {values.category &&
+                typesPerCategory[values.category]?.map(x => (
+                  <option key={x.value} value={x.value}>
+                    {x.label}
+                  </option>
+                ))}
+            </Field>
+            <ErrorMessage name="balanceTypeCuid" component="div" />
+          </div>
 
-type SelectTypeProps = {
-  category: BalanceType['category']
-  typesPerCategory: Record<BalanceType['category'], BalanceType[]>
-}
-
-const SelectType: FC<SelectTypeProps> = ({ category, typesPerCategory }) => {
-  const options = useMemo(() => {
-    return typesPerCategory[category]?.map(typeAsOption) ?? []
-  }, [category, typesPerCategory])
-
-  return (
-    <div className="flex flex-col">
-      <label htmlFor="category">Category</label>
-      <select name="category" className="text-black">
-        <option>Select type</option>
-        {options.map(x => (
-          <option key={x.value} value={x.value}>
-            {x.label}
-          </option>
-        ))}
-      </select>
-    </div>
+          <button
+            type="submit"
+            disabled={isSubmitting || keys(errors).length > 0}
+          >
+            Add
+          </button>
+        </Form>
+      )}
+    </Formik>
   )
 }
 
