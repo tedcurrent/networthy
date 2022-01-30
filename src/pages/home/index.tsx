@@ -1,6 +1,7 @@
 import { formatISO } from 'date-fns'
 import type { NextPage } from 'next'
 import Head from 'next/head'
+import Link from 'next/link'
 import { FC, useMemo } from 'react'
 
 import { Money } from '../../@types/Money'
@@ -15,17 +16,9 @@ const Home: NextPage = () => {
     <>
       <Head>
         <title>Networthy</title>
-        <meta name="description" content="Networthy" />
-        <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <nav className="container mb-4 mt-4">
-        <span className="text-md font-bold">Networthy</span>
-      </nav>
-
-      <main className="container mt-20">
-        <Content />
-      </main>
+      <Content />
     </>
   )
 }
@@ -49,7 +42,7 @@ const Content: FC = () => {
   }
 
   return (
-    <div>
+    <section>
       <div className="flex justify-between mb-4 items-center">
         <h1 className="text-lg font-bold">Net Worth</h1>
         <span className="text-2xl">
@@ -73,7 +66,13 @@ const Content: FC = () => {
           </div>
         </Card>
       </div>
-    </div>
+
+      <div>
+        <Link href="/add-balance">
+          <a>Add balance</a>
+        </Link>
+      </div>
+    </section>
   )
 }
 

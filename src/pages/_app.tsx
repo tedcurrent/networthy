@@ -3,11 +3,26 @@ import '../styles/globals.css'
 
 import { withTRPC } from '@trpc/next'
 import type { AppProps } from 'next/app'
+import Head from 'next/head'
 
+import Navbar from '../components/Navbar'
 import { AppRouter } from '../server/routers/_app'
 
 const MyApp = ({ Component, pageProps }: AppProps) => {
-  return <Component {...pageProps} />
+  return (
+    <>
+      <Head>
+        <meta name="description" content="Networthy" />
+        <link rel="icon" href="/favicon.ico" />
+      </Head>
+
+      <Navbar />
+
+      <main className="container mt-20">
+        <Component {...pageProps} />
+      </main>
+    </>
+  )
 }
 
 export default withTRPC<AppRouter>({
