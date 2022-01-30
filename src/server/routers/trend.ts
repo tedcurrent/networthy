@@ -9,6 +9,9 @@ type NetworthTrendDataPoint = { dateTime: string; networth: number }
 export const trendRouter = createRouter().query('get', {
   input: z.void(),
   resolve: async ({ ctx }) => {
+    // Calculates networth per date on db level. It's slightly tricky as not
+    // all datetimes have all categories filled in, so some cross joining has to be done.
+    // This is where Prisma can't help us.
     const trend: NetworthTrendDataPoint[] = await ctx.prisma
       .$queryRaw(Prisma.sql`
         select
