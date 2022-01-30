@@ -1,13 +1,13 @@
 import { BalanceCategory, BalanceItem, BalanceType } from '@prisma/client'
 import R from 'ramda'
-import { z } from 'zod'
+import * as yup from 'yup'
 
 import { DEFAULT_CURRENCY, formatMoney } from '../../utils/formatMoney'
 import { createRouter } from '../createRouter'
 
 export const networthRouter = createRouter().query('get-by-timestamp', {
-  input: z.object({
-    timestamp: z.string()
+  input: yup.object({
+    timestamp: yup.string().required()
   }),
   resolve: async ({ input, ctx }) => {
     const latestBalanceTypesWithItems = await ctx.prisma.balanceType.findMany({
