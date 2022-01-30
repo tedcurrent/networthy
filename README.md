@@ -3,6 +3,14 @@ Measure your networth over time. Mockup snapshot in [Excalidraw](https://excalid
 
 For now this is just a tech playground before auth is implemented.
 
+### Built with
+- Next.js
+- Tailwindcss
+- React-query
+- TRPC
+- Prisma
+- Planetscale
+
 ## Dev setup
 
 ### Run dev environment
