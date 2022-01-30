@@ -23,3 +23,6 @@ Be sure to also run a [shadow database](https://www.prisma.io/docs/concepts/comp
 
 ### Format migrations locally
 `npx prisma format`
+
+### Deployment
+Automatic deployment when pushing to the main branch. Deployed to and with [Vercel](https://vercel.com/).
