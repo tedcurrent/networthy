@@ -78,6 +78,7 @@ const Form = () => {
         <div className="flex flex-col">
           <label htmlFor="category">Category</label>
           <select name="category" className="text-black">
+            <option>Select category</option>
             {categoryOptions.map(x => (
               <option key={x.value} value={x.value}>
                 {x.label}
@@ -101,13 +102,14 @@ type SelectTypeProps = {
 
 const SelectType: FC<SelectTypeProps> = ({ category, typesPerCategory }) => {
   const options = useMemo(() => {
-    return typesPerCategory[category].map(typeAsOption)
+    return typesPerCategory[category]?.map(typeAsOption) ?? []
   }, [category, typesPerCategory])
 
   return (
     <div className="flex flex-col">
       <label htmlFor="category">Category</label>
       <select name="category" className="text-black">
+        <option>Select type</option>
         {options.map(x => (
           <option key={x.value} value={x.value}>
             {x.label}
