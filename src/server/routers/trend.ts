@@ -1,5 +1,4 @@
 import { Prisma } from '@prisma/client'
-import { z } from 'zod'
 
 import { DEFAULT_CURRENCY } from '../../utils/formatMoney'
 import { createRouter } from '../createRouter'
@@ -7,7 +6,6 @@ import { createRouter } from '../createRouter'
 type NetworthTrendDataPoint = { dateTime: string; networth: number }
 
 export const trendRouter = createRouter().query('get', {
-  input: z.void(),
   resolve: async ({ ctx }) => {
     // Calculates networth per date on db level. It's slightly tricky as not
     // all datetimes have all categories filled in, so some cross joining has to be done.
