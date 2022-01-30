@@ -20,7 +20,7 @@ Be sure to also run a shadow database on the side when making changes to the sch
 ### TODO
 - [ ] Add support for viewing wealth breakdown
 - [ ] Add support for inputting wealth through the client
-- [ ] E2E tests with Detox
+- [ ] E2E tests with Cypress
 - [ ] Feature tests
 - [ ] Add some light animations
 - [ ] Add dark / light mode support
