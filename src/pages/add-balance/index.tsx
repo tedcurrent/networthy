@@ -47,10 +47,13 @@ const AddBalance: NextPage = () => {
 }
 
 const Content = () => {
+  const context = trpc.useContext()
   const router = useRouter()
   const { data, isLoading } = trpc.useQuery(['balanceType.get-all'])
   const mutation = trpc.useMutation(['balanceItem.add'], {
     onSuccess: () => {
+      context.invalidateQueries(['networth.get-by-timestamp'])
+      context.invalidateQueries(['trend.get'])
       router.back()
     }
   })
