@@ -1,4 +1,4 @@
-import { formatISO } from 'date-fns'
+import { endOfDay, formatISO } from 'date-fns'
 import type { NextPage } from 'next'
 import Head from 'next/head'
 import Link from 'next/link'
@@ -25,7 +25,7 @@ const Home: NextPage = () => {
 
 const Content: FC = () => {
   const timestamp = useMemo(() => {
-    return formatISO(new Date())
+    return formatISO(endOfDay(new Date()))
   }, [])
 
   const { data, isLoading } = trpc.useQuery([
