@@ -19,7 +19,7 @@ For now this is just a tech playground before auth is implemented.
 ### Run dev database
 A serverless MySQL DB, [PlanetScale](https://planetscale.com/), is used. After setting up PlanetScale, connect:
 
-`pscale connect networthy <BRANCH>`
+`pscale connect <DB> <BRANCH> --port <PORT>`
 
 Be sure to also run a [shadow database](https://www.prisma.io/docs/concepts/components/prisma-migrate/shadow-database) on the side if making changes to the schema. This needs to be set up in PlanetScale as PlanetScale does not allow dropping or creating databases with SQL.
 
