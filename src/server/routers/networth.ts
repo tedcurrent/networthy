@@ -1,8 +1,11 @@
-import { BalanceCategory, BalanceItem, BalanceType } from '@prisma/client'
+import { BalanceCategory } from '@prisma/client'
 import R from 'ramda'
 import * as yup from 'yup'
 
-import { DEFAULT_CURRENCY, formatMoney } from '../../utils/formatMoney'
+import {
+  DEFAULT_CURRENCY,
+  makeMoney as makeMoney
+} from '../../utils/formatMoney'
 import { createRouter } from '../createRouter'
 
 export const networthRouter = createRouter().query('get-by-timestamp', {
@@ -12,8 +15,20 @@ export const networthRouter = createRouter().query('get-by-timestamp', {
   resolve: async ({ input, ctx }) => {
     const latestBalanceTypesWithItems = await ctx.prisma.balanceType.findMany({
       distinct: ['name'],
-      include: {
+      select: {
+        cuid: true,
+        category: true,
+        name: true,
         balanceItems: {
+          select: {
+            cuid: true,
+            value: true,
+            balanceType: {
+              select: {
+                category: true
+              }
+            }
+          },
           take: 1,
           where: {
             createdAt: {
@@ -33,13 +48,11 @@ export const networthRouter = createRouter().query('get-by-timestamp', {
     )
 
     const computeBalanceValue = (
-      typesWithItems: (BalanceType & { balanceItems: BalanceItem[] })[]
+      typesWithItems: typeof latestBalanceTypesWithItems
     ) => {
       return R.pipe(
-        R.map((balanceType: BalanceType & { balanceItems: BalanceItem[] }) => {
-          const item = R.head(balanceType.balanceItems)
-
-          return item ? item.value : null
+        R.map((x: { balanceItems: { value: number }[] }) => {
+          return R.head(x.balanceItems)?.value ?? null
         }),
         R.reject(R.isNil),
         R.sum
@@ -51,13 +64,17 @@ export const networthRouter = createRouter().query('get-by-timestamp', {
 
     return {
       networth: {
-        money: formatMoney(assetsValue - liabilitiesValue, DEFAULT_CURRENCY)
+        money: makeMoney(assetsValue - liabilitiesValue, DEFAULT_CURRENCY)
       },
-      assets: {
-        money: formatMoney(assetsValue, DEFAULT_CURRENCY)
+      assetsTotal: {
+        money: makeMoney(assetsValue, DEFAULT_CURRENCY)
       },
       liabilitiesTotal: {
-        money: formatMoney(liabilitiesValue, DEFAULT_CURRENCY)
+        money: makeMoney(liabilitiesValue, DEFAULT_CURRENCY)
+      },
+      breakdown: {
+        assets,
+        liabilities
       }
     }
   }

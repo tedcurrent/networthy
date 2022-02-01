@@ -9,6 +9,7 @@ import ActivityIndicator from '../../components/ActivityIndicator'
 import Card from '../../components/Card'
 import { formatMoneyString } from '../../utils/formatMoney'
 import { trpc } from '../../utils/trpc'
+import Breakdown from './Breakdown'
 import NetworthChart from './NetworthChart'
 
 const Home: NextPage = () => {
@@ -41,19 +42,21 @@ const Content: FC = () => {
     return <span>No data found.</span>
   }
 
-  return (
-    <section>
-      <div className="flex justify-between mb-4 items-center">
-        <h1 className="text-lg font-bold">Net Worth</h1>
-        <span className="text-2xl">
-          {formatMoneyString(data.networth.money)}
-        </span>
-      </div>
+  console.log(data.breakdown.assets)
 
-      <div className="mb-10">
+  return (
+    <>
+      <section className="mb-10">
+        <div className="flex justify-between mb-4 items-center">
+          <h1 className="text-lg font-bold">Net Worth</h1>
+          <span className="text-2xl">
+            {formatMoneyString(data.networth.money)}
+          </span>
+        </div>
+
         <Card>
           <div className="mb-6">
-            <WealthRow label="Assets" money={data.assets.money} />
+            <WealthRow label="Assets" money={data.assetsTotal.money} />
             <WealthRow
               label="Liabilities"
               money={data.liabilitiesTotal.money}
@@ -65,14 +68,18 @@ const Content: FC = () => {
             <NetworthChart />
           </div>
         </Card>
-      </div>
+      </section>
 
-      <div>
+      <section className="mb-2">
+        <Breakdown />
+      </section>
+
+      <div className="flex justify-end">
         <Link href="/add-balance">
           <a>Add balance</a>
         </Link>
       </div>
-    </section>
+    </>
   )
 }
 
