@@ -7,10 +7,10 @@ import { FC, useMemo } from 'react'
 import { Money } from '../../@types/Money'
 import ActivityIndicator from '../../components/ActivityIndicator'
 import Card from '../../components/Card'
+import Breakdown from '../../modules/Breakdown'
+import NetworthChart from '../../modules/NetworthChart'
 import { formatMoneyString } from '../../utils/money'
 import { trpc } from '../../utils/trpc'
-import Breakdown from './Breakdown'
-import NetworthChart from './NetworthChart'
 
 const Home: NextPage = () => {
   return (
@@ -69,7 +69,10 @@ const Content: FC = () => {
       </section>
 
       <section className="mb-2">
-        <Breakdown breakdown={data.breakdown} />
+        <Breakdown
+          assets={data.breakdown.assets}
+          liabilities={data.breakdown.liabilities}
+        />
       </section>
 
       <div className="flex justify-end">

@@ -1,21 +1,27 @@
 import React, { FC } from 'react'
 
-import { Money } from '../../@types/Money'
-import Card from '../../components/Card'
-import { balanceTypeLabels, BalanceTypeName } from '../../utils/balanceType'
-import { formatMoneyString } from '../../utils/money'
-import { InferQueryOutput } from '../../utils/trpc'
+import { Money } from '../@types/Money'
+import Card from '../components/Card'
+import { balanceTypeLabels, BalanceTypeName } from '../utils/balanceType'
+import { formatMoneyString } from '../utils/money'
 
-type Props = {
-  breakdown: InferQueryOutput<'networth.get-by-timestamp'>['breakdown']
+type BalanceType = {
+  cuid: string
+  money: Money
+  name: string
 }
 
-const Breakdown: FC<Props> = ({ breakdown }) => {
+type Props = {
+  assets: BalanceType[]
+  liabilities: BalanceType[]
+}
+
+const Breakdown: FC<Props> = ({ assets, liabilities }) => {
   return (
     <>
       <h2 className="text-lg font-bold mb-4">Breakdown</h2>
       <Card>
-        {breakdown?.assets.map(x => (
+        {assets.map(x => (
           <Row
             key={x.cuid}
             label={balanceTypeLabels[x.name as BalanceTypeName]}
@@ -23,7 +29,7 @@ const Breakdown: FC<Props> = ({ breakdown }) => {
           />
         ))}
 
-        {breakdown?.liabilities.map(x => (
+        {liabilities.map(x => (
           <Row
             key={x.cuid}
             label={balanceTypeLabels[x.name as BalanceTypeName]}
