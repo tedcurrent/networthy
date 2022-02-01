@@ -2,7 +2,7 @@ import { Money } from '../@types/Money'
 
 export const DEFAULT_CURRENCY = 'EUR'
 
-export const formatMoney = (value: number, currency: string): Money => {
+export const makeMoney = (value: number, currency: string): Money => {
   return { value, currency }
 }
 

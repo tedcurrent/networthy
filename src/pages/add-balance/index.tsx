@@ -7,6 +7,7 @@ import React, { useMemo } from 'react'
 import * as yup from 'yup'
 
 import ActivityIndicator from '../../components/ActivityIndicator'
+import { balanceTypeLabels, BalanceTypeName } from '../../utils/balanceType'
 import { keys } from '../../utils/keys'
 import { titlecase } from '../../utils/titlecase'
 import { InferQueryOutput, trpc } from '../../utils/trpc'
@@ -15,17 +16,6 @@ const addBalanceSchema = yup.object({
   value: yup.number().min(0).required('Value required.'),
   balanceTypeCuid: yup.string().required('Type required.')
 })
-
-const balanceTypeLabels = {
-  'checking-account': 'Checking account',
-  mortgage: 'Mortgage',
-  'private-equity': 'Private equity',
-  'real-estate': 'Real estate',
-  'savings-account': 'Savings account',
-  stocks: 'Stocks'
-}
-
-type BalanceTypeName = keyof typeof balanceTypeLabels
 
 type BalanceType =
   InferQueryOutput<'balanceType.get-all'>['balanceTypes'][number]

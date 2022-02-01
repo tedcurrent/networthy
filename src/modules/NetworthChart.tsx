@@ -16,9 +16,9 @@ import {
 } from 'recharts/types/component/DefaultTooltipContent'
 import { TooltipProps } from 'recharts/types/component/Tooltip'
 
-import ActivityIndicator from '../../components/ActivityIndicator'
-import { formatMoneyString } from '../../utils/formatMoney'
-import { trpc } from '../../utils/trpc'
+import ActivityIndicator from '../components/ActivityIndicator'
+import { formatMoneyString } from '../utils/money'
+import { trpc } from '../utils/trpc'
 
 const green = 'var(--color-green-400)'
 const gray = 'var(--color-gray-400)'
