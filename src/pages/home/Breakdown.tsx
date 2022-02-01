@@ -15,7 +15,7 @@ const Breakdown: FC<Props> = ({ breakdown }) => {
     <>
       <h2 className="text-lg font-bold mb-4">Breakdown</h2>
       <Card>
-        {breakdown.assets.map(x => (
+        {breakdown?.assets.map(x => (
           <Row
             key={x.cuid}
             label={balanceTypeLabels[x.name as BalanceTypeName]}
@@ -23,7 +23,7 @@ const Breakdown: FC<Props> = ({ breakdown }) => {
           />
         ))}
 
-        {breakdown.liabilities.map(x => (
+        {breakdown?.liabilities.map(x => (
           <Row
             key={x.cuid}
             label={balanceTypeLabels[x.name as BalanceTypeName]}
