@@ -1,6 +1,6 @@
 import { Prisma } from '@prisma/client'
 
-import { DEFAULT_CURRENCY } from '../../utils/formatMoney'
+import { DEFAULT_CURRENCY } from '../../utils/money'
 import { createRouter } from '../createRouter'
 
 type NetworthTrendDataPoint = { dateTime: string; networth: number }

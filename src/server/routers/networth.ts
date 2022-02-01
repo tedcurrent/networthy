@@ -2,10 +2,8 @@ import { BalanceCategory } from '@prisma/client'
 import R from 'ramda'
 import * as yup from 'yup'
 
-import {
-  DEFAULT_CURRENCY,
-  makeMoney as makeMoney
-} from '../../utils/formatMoney'
+import { Money } from '../../@types/Money'
+import { DEFAULT_CURRENCY, makeMoney } from '../../utils/money'
 import { createRouter } from '../createRouter'
 
 export const networthRouter = createRouter().query('get-by-timestamp', {
@@ -47,20 +45,13 @@ export const networthRouter = createRouter().query('get-by-timestamp', {
       latestBalanceTypesWithItems
     )
 
-    const computeBalanceValue = (
-      typesWithItems: typeof latestBalanceTypesWithItems
-    ) => {
-      return R.pipe(
-        R.map((x: { balanceItems: { value: number }[] }) => {
-          return R.head(x.balanceItems)?.value ?? null
-        }),
-        R.reject(R.isNil),
-        R.sum
-      )(typesWithItems)
+    const breakdown = {
+      assets: formatBalance(assets),
+      liabilities: formatBalance(liabilities)
     }
 
-    const assetsValue = computeBalanceValue(assets)
-    const liabilitiesValue = computeBalanceValue(liabilities)
+    const assetsValue = computeTypeTotal(breakdown.assets)
+    const liabilitiesValue = computeTypeTotal(breakdown.liabilities)
 
     return {
       networth: {
@@ -72,10 +63,26 @@ export const networthRouter = createRouter().query('get-by-timestamp', {
       liabilitiesTotal: {
         money: makeMoney(liabilitiesValue, DEFAULT_CURRENCY)
       },
-      breakdown: {
-        assets,
-        liabilities
-      }
+      breakdown
     }
   }
 })
+
+const computeTypeTotal = R.pipe(
+  R.map((x: { money: Money }) => x.money.value),
+  R.sum
+)
+
+const formatBalance = R.map(
+  (x: {
+    balanceItems: { value: number }[]
+    category: BalanceCategory
+    cuid: string
+    name: string
+  }) => ({
+    cuid: x.cuid,
+    name: x.name,
+    category: x.category,
+    money: makeMoney(R.head(x.balanceItems)?.value ?? 0, DEFAULT_CURRENCY)
+  })
+)

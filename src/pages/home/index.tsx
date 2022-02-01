@@ -7,7 +7,7 @@ import { FC, useMemo } from 'react'
 import { Money } from '../../@types/Money'
 import ActivityIndicator from '../../components/ActivityIndicator'
 import Card from '../../components/Card'
-import { formatMoneyString } from '../../utils/formatMoney'
+import { formatMoneyString } from '../../utils/money'
 import { trpc } from '../../utils/trpc'
 import Breakdown from './Breakdown'
 import NetworthChart from './NetworthChart'
@@ -42,8 +42,6 @@ const Content: FC = () => {
     return <span>No data found.</span>
   }
 
-  console.log(data.breakdown.assets)
-
   return (
     <>
       <section className="mb-10">
@@ -71,7 +69,7 @@ const Content: FC = () => {
       </section>
 
       <section className="mb-2">
-        <Breakdown />
+        <Breakdown breakdown={data.breakdown} />
       </section>
 
       <div className="flex justify-end">
